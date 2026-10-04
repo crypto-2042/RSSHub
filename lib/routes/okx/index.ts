@@ -44,8 +44,8 @@ export const route: Route = {
                     label: 'Web3',
                 },
                 {
-                    value: 'earn',
-                    label: '赚币',
+                    value: 'earn-and-loan',
+                    label: '赚币与借币',
                 },
                 {
                     value: 'jumpstart',
@@ -95,7 +95,7 @@ async function handler(ctx: Context) {
 
     const ssrData = JSON.parse($('script[data-id="__app_data_for_ssr__"]').text());
     const itemsTemp: Array<{ title: string; link: string; pubDate: Date }> =
-        ssrData?.appContext?.initialProps?.sectionData?.articleList?.items?.map((item: { title: string; slug: string; publishTime: string }) => ({
+        ssrData?.appContext?.initialProps?.sectionData?.articleList?.list?.map((item: { title: string; slug: string; publishTime: string }) => ({
             title: item.title,
             link: `${baseUrl}/zh-hans/help/${item.slug}`,
             pubDate: new Date(item.publishTime),

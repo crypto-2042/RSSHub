@@ -7,151 +7,225 @@ import cache from '@/utils/cache';
 import ofetch from '@/utils/ofetch';
 import { parseDate } from '@/utils/parse-date';
 
-import type { BitgetResponse } from './type';
+const baseUrl = 'https://www.bitget.com';
 
-interface AnnouncementRequestBody {
-    pageSize: string;
-    openUnread: number;
-    stationLetterType: string;
-    isPre: boolean;
-    lastEndId: null;
-    languageType: number;
-    excludeStationLetterType?: string;
+// The announcement center only serves these language paths, the other locales fall back to English
+const languages = ['zh-CN', 'en', 'es-ES'];
+
+/**
+ * Section ids are not stable across languages (and some sections are missing
+ * from a language entirely), so every type maps to its id per language.
+ * `en` is served without a language prefix.
+ */
+const sectionIds: Record<string, Record<string, string>> = {
+    'zh-CN': {
+        latest: '12508313443483',
+        'new-listing': '5955813039257',
+        'product-updates': '12508313449108',
+        campaigns: '4413154768537',
+        delistings: '12508313443290',
+        security: '12508313444842',
+        institutional: '12508313450724',
+        'api-trading': '360011097932',
+        fiat: '12508313443315',
+        maintenance: '12508313446623',
+    },
+    en: {
+        latest: '12508313443483',
+        'new-listing': '5955813039257',
+        'product-updates': '12508313449108',
+        campaigns: '4413154768537',
+        delistings: '12508313443290',
+        security: '12508313444842',
+        institutional: '12508313450724',
+        'api-trading': '360011097932',
+        fiat: '12508313443315',
+        maintenance: '12508313446623',
+    },
+    'es-ES': {
+        latest: '12508313443483',
+        'product-updates': '12508313448115',
+        campaigns: '4413154768537',
+        delistings: '12508313443290',
+        security: '12508313444842',
+        'api-trading': '360011097932',
+        maintenance: '12508313446623',
+    },
+};
+
+const sectionOrder = ['latest', 'new-listing', 'product-updates', 'campaigns', 'delistings', 'security', 'institutional', 'api-trading', 'fiat', 'maintenance'] as const;
+
+type AnnouncementType = (typeof sectionOrder)[number];
+
+interface ArticleItem {
+    contentId: string;
+    title: string;
+    showTime: string;
+}
+
+interface SectionArticle {
+    items: ArticleItem[];
+}
+
+/**
+ * The support site is a React application that embeds its server state in a
+ * `window.__ZEUS_REACT_QUERY_STATE__` script tag, so the data can be read
+ * without executing any JavaScript.
+ */
+function parseQueryState(html: string) {
+    const $ = load(html);
+    const state = $('script')
+        .toArray()
+        .map((element) => $(element).text())
+        .find((text) => text.includes('__ZEUS_REACT_QUERY_STATE__'));
+    if (!state) {
+        throw new Error('Failed to find the Bitget announcement data in the response');
+    }
+
+    const start = state.indexOf('{', state.indexOf('__ZEUS_REACT_QUERY_STATE__'));
+    if (start === -1) {
+        throw new Error('Failed to parse the Bitget announcement data');
+    }
+
+    // Extract the assignment by matching braces, quotes may contain braces
+    let depth = 0;
+    let end = -1;
+    let inString = false;
+    let escaped = false;
+    for (let i = start; i < state.length; i++) {
+        const char = state[i];
+        if (inString) {
+            if (escaped) {
+                escaped = false;
+            } else if (char === '\\') {
+                escaped = true;
+            } else if (char === '"') {
+                inString = false;
+            }
+            continue;
+        }
+        if (char === '"') {
+            inString = true;
+        } else if (char === '{') {
+            depth++;
+        } else if (char === '}') {
+            depth--;
+            if (depth === 0) {
+                end = i + 1;
+                break;
+            }
+        }
+    }
+    if (end === -1) {
+        throw new Error('Failed to parse the Bitget announcement data');
+    }
+    return JSON.parse(state.slice(start, end));
+}
+
+function getQueryData(queries: Array<{ queryKey: unknown[]; state?: { data?: unknown } }>, key: string) {
+    const query = queries.find((item) => item.queryKey[0] === key);
+    if (!query?.state?.data) {
+        throw new Error(`Failed to find the "${key}" data in the Bitget response`);
+    }
+    return query.state.data as Record<string, any>;
 }
 
 const handler: Route['handler'] = async (ctx) => {
-    const baseUrl = 'https://www.bitget.com';
-    const announcementApiUrl = `${baseUrl}/v1/msg/push/stationLetterNew`;
-    const { type, lang = 'zh-CN' } = ctx.req.param<'/bitget/announcement/:type/:lang?'>();
-    const languageCode = lang.replace('-', '_');
-    const headers = {
-        Referer: baseUrl,
-        accept: 'application/json, text/plain, */*',
-        'content-type': 'application/json;charset=UTF-8',
-        language: languageCode,
-        locale: languageCode,
-    };
-    const pageSize = ctx.req.query('limit') ?? '10';
-
-    // stationLetterType: 0 表示全部通知，02 表示新币上线，01 表示最新活动，06 表示最新公告
-    const reqBody: AnnouncementRequestBody = {
-        pageSize,
-        openUnread: 0,
-        stationLetterType: '0',
-        isPre: false,
-        lastEndId: null,
-        languageType: 1,
-    };
-
-    // 根据 type 判断 reqBody 的 stationLetterType 的值
-    switch (type) {
-        case 'new-listing':
-            reqBody.stationLetterType = '02';
-            break;
-
-        case 'latest-activities':
-            reqBody.stationLetterType = '01';
-            break;
-
-        case 'new-announcement':
-            reqBody.stationLetterType = '06';
-            break;
-
-        case 'all':
-            reqBody.stationLetterType = '0';
-            reqBody.excludeStationLetterType = '00';
-            break;
-
-        default:
-            throw new Error('Invalid type');
+    const { type = 'latest', lang = 'zh-CN' } = ctx.req.param<'/bitget/announcement/:type/:lang?'>();
+    if (!sectionOrder.includes(type as AnnouncementType)) {
+        throw new Error(`Invalid type: ${type}. Available types: ${sectionOrder.join(', ')}`);
+    }
+    if (!languages.includes(lang)) {
+        throw new Error(`Invalid lang: ${lang}. Available languages: ${languages.join(', ')}`);
     }
 
-    const response = await cache.tryGet(
-        `bitget:announcement:${type}:${pageSize}:${lang}`,
+    const sectionId = sectionIds[lang]?.[type];
+    if (!sectionId) {
+        throw new Error(`The "${type}" section is not available in ${lang}. Available types: ${Object.keys(sectionIds[lang]).join(', ')}`);
+    }
+
+    const locale = lang.replace('-', '_');
+    const prefix = lang === 'en' ? '' : `/${lang}`;
+    const headers = {
+        Referer: `${baseUrl}${prefix}/support/announcement-center`,
+        accept: 'application/json, text/plain, */*',
+        language: locale,
+        locale,
+    };
+    const limit = Number(ctx.req.query('limit') ?? 20);
+
+    const { items, title } = await cache.tryGet(
+        `bitget:announcement:${type}:${lang}:${limit}`,
         async () => {
-            const result = await ofetch<BitgetResponse>(announcementApiUrl, {
-                method: 'POST',
-                body: reqBody,
-                headers,
-            });
-            if (result?.code !== '200') {
-                throw new Error('Failed to fetch announcements, error code: ' + result?.code);
+            const html = await ofetch<string>(`${baseUrl}${prefix}/support/sections/${sectionId}`, { headers });
+            const section = getQueryData(parseQueryState(html).queries, 'sections');
+            const sectionArticle = section.sectionArticle as SectionArticle;
+            if (!Array.isArray(sectionArticle?.items)) {
+                throw new Error('Bitget returned an invalid announcement list');
             }
-            return result;
+
+            // The localized section name is only available in the navigation list
+            const navigation = section.originCategory?.navigationList?.find((item: { jumpUrl?: string }) => item.jumpUrl?.replace(/\/$/, '').endsWith(sectionId));
+
+            return {
+                title: navigation?.navigationName ?? section.originCategory?.categoryName ?? 'Bitget',
+                items: sectionArticle.items.slice(0, limit),
+            };
         },
         config.cache.routeExpire,
         false
     );
 
-    if (!response) {
-        throw new Error('Failed to fetch announcements');
-    }
-    const items = response.data.items;
     const data = await Promise.all(
         items.map((item) =>
-            cache.tryGet(`bitget:announcement:${item.id}:${pageSize}:${lang}`, async () => {
-                // 从 unix 时间戳转换为日期
-                const date = parseDate(Number(item.sendTime));
+            cache.tryGet(`bitget:announcement:${item.contentId}:${lang}`, async () => {
+                const link = `${baseUrl}${prefix}/support/articles/${item.contentId}`;
                 const dataItem: DataItem = {
-                    title: item.title ?? '',
-                    link: item.openUrl ?? '',
-                    pubDate: item.sendTime ? date : undefined,
-                    description: item.content ?? '',
-                    image: item.imgUrl,
+                    title: item.title,
+                    link,
+                    pubDate: item.showTime ? parseDate(Number(item.showTime)) : undefined,
                 };
 
-                if (item.stationLetterType === '01' || item.stationLetterType === '06') {
-                    try {
-                        const itemResponse = await ofetch<string>(item.openUrl ?? '', {
-                            headers,
-                        });
-                        const $ = load(itemResponse);
-                        const nextData = JSON.parse($('script#__NEXT_DATA__').text());
-                        dataItem.description = nextData.props.pageProps.details?.content || nextData.props.pageProps.pageInitInfo?.ruleContent || item.content || '';
-                    } catch (error: any) {
-                        if (error.name && ['HTTPError', 'RequestError', 'FetchError'].includes(error.name)) {
-                            dataItem.description = item.content ?? '';
-                        } else {
-                            throw error;
-                        }
-                    }
+                try {
+                    const detailResponse = await ofetch<string>(link, { headers });
+                    const { queries } = parseQueryState(detailResponse);
+                    dataItem.description = getQueryData(queries, 'articles').articleDetails?.content;
+                } catch {
+                    // Keep the feed usable even if a single article cannot be fetched
                 }
+
                 return dataItem;
             })
         )
     );
 
     return {
-        title: `Bitget | ${findTypeLabel(type)}`,
-        link: `https://www.bitget.com/${lang}/inmail`,
+        title: `${title} - Bitget`,
+        link: `${baseUrl}${prefix}/support/announcement-center`,
         item: data,
     };
-};
-
-const findTypeLabel = (type: string) => {
-    const typeMap = {
-        all: 'All',
-        'new-listing': 'New Listing',
-        'latest-activities': 'Latest Activities',
-        'new-announcement': 'New Announcement',
-    };
-    return typeMap[type];
 };
 
 export const route: Route = {
     path: '/announcement/:type/:lang?',
     categories: ['finance'],
     view: ViewType.Articles,
-    example: '/bitget/announcement/all/zh-CN',
+    example: '/bitget/announcement/latest/zh-CN',
     parameters: {
         type: {
             description: 'Bitget 通知类型',
-            default: 'all',
+            default: 'latest',
             options: [
-                { value: 'all', label: '全部通知' },
+                { value: 'latest', label: '最新动态' },
                 { value: 'new-listing', label: '新币上线' },
-                { value: 'latest-activities', label: '最新活动' },
-                { value: 'new-announcement', label: '最新公告' },
+                { value: 'product-updates', label: '产品更新' },
+                { value: 'campaigns', label: '交易比赛和活动' },
+                { value: 'delistings', label: '下架资讯' },
+                { value: 'security', label: '安全专栏' },
+                { value: 'institutional', label: '机构服务' },
+                { value: 'api-trading', label: 'API交易' },
+                { value: 'fiat', label: '法币' },
+                { value: 'maintenance', label: '维护/系统升级' },
             ],
         },
         lang: {
@@ -159,44 +233,40 @@ export const route: Route = {
             default: 'zh-CN',
             options: [
                 { value: 'zh-CN', label: '中文' },
-                { value: 'en-US', label: 'English' },
+                { value: 'en', label: 'English' },
                 { value: 'es-ES', label: 'Español' },
-                { value: 'fr-FR', label: 'Français' },
-                { value: 'de-DE', label: 'Deutsch' },
-                { value: 'ja-JP', label: '日本語' },
-                { value: 'ru-RU', label: 'Русский' },
-                { value: 'ar-SA', label: 'العربية' },
             ],
         },
     },
     radar: [
         {
-            source: ['www.bitget.com/:lang/inmail'],
-            target: '/announcement/all/:lang',
+            source: ['www.bitget.com/:lang/support/announcement-center', 'www.bitget.com/support/announcement-center'],
+            target: '/announcement/latest/:lang?',
         },
     ],
     name: 'Announcement',
     description: `type:
 
-| Type              | Description |
-| ----------------- | ----------- |
-| all               | 全部通知    |
-| new-listing       | 新币上线    |
-| latest-activities | 最新活动    |
-| new-announcement  | 最新公告    |
+| Type            | Description    |
+| --------------- | -------------- |
+| latest          | 最新动态       |
+| new-listing     | 新币上线       |
+| product-updates | 产品更新       |
+| campaigns       | 交易比赛和活动 |
+| delistings      | 下架资讯       |
+| security        | 安全专栏       |
+| institutional   | 机构服务       |
+| api-trading     | API交易        |
+| fiat            | 法币           |
+| maintenance     | 维护/系统升级  |
 
 lang:
 
-| Lang  | Description |
-| ----- | ----------- |
-| zh-CN | 中文        |
-| en-US | English     |
-| es-ES | Español     |
-| fr-FR | Français    |
-| de-DE | Deutsch     |
-| ja-JP | 日本語      |
-| ru-RU | Русский     |
-| ar-SA | العربية     |`,
+| Lang  | Description | Missing types                            |
+| ----- | ----------- | ---------------------------------------- |
+| zh-CN | 中文        |                                          |
+| en    | English     |                                          |
+| es-ES | Español     | new-listing, institutional, fiat         |`,
     maintainers: ['YukiCoco'],
     handler,
 };
