@@ -1,3 +1,5 @@
+import type { Context } from 'hono';
+
 import type { DataItem, Route } from '@/types';
 import { ViewType } from '@/types';
 import got from '@/utils/got';
@@ -35,14 +37,14 @@ interface Announcement {
     publishTime?: number;
 }
 
-async function handler(ctx) {
+async function handler(ctx: Context) {
     const { type = '', locale = 'en-US' } = ctx.req.param<'/bybit/announcement/:type?/:locale?'>();
     const limit = ctx.req.query('limit') ?? 20;
 
     if (!locales.includes(locale)) {
         throw new Error(`Invalid locale: ${locale}. Available locales: ${locales.join(', ')}`);
     }
-    if (type && !(type in types)) {
+    if (type && !Object.hasOwn(types, type)) {
         throw new Error(`Invalid type: ${type}. Available types: ${Object.keys(types).join(', ')}`);
     }
 
