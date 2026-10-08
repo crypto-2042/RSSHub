@@ -41204,7 +41204,7 @@
           }
         ],
         "name": "Announcement",
-        "description": "type:\n\n| Type            | Description    |\n| --------------- | -------------- |\n| latest          | 最新动态       |\n| new-listing     | 新币上线       |\n| product-updates | 产品更新       |\n| campaigns       | 交易比赛和活动 |\n| delistings      | 下架资讯       |\n| security        | 安全专栏       |\n| institutional   | 机构服务       |\n| api-trading     | API交易        |\n| fiat            | 法币           |\n| maintenance     | 维护/系统升级  |\n\nlang:\n\n| Lang  | Description | Missing types                            |\n| ----- | ----------- | ---------------------------------------- |\n| zh-CN | 中文        |                                          |\n| en    | English     |                                          |\n| es-ES | Español     | new-listing, institutional, fiat         |",
+        "description": "type:\n\n| Type            | Description     |\n| --------------- | --------------- |\n| latest          | 最新动态        |\n| new-listing     | 新币上线        |\n| product-updates | 产品更新        |\n| campaigns       | 交易比赛和活动  |\n| delistings      | 下架资讯        |\n| security        | 安全专栏        |\n| institutional   | 机构服务        |\n| api-trading     | API 交易        |\n| fiat            | 法币            |\n| maintenance     | 维护 / 系统升级 |\n\nlang:\n\n| Lang  | Description | Missing types                    |\n| ----- | ----------- | -------------------------------- |\n| zh-CN | 中文        |                                  |\n| en    | English     |                                  |\n| es-ES | Español     | new-listing, institutional, fiat |",
         "maintainers": [
           "YukiCoco"
         ],
