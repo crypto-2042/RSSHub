@@ -1278,6 +1278,90 @@ export default {
     "url": "bitbucket.com",
     "lang": "en"
   },
+  "bithumb": {
+    "routes": {
+      "/notice/:category?": {
+        "path": "/notice/:category?",
+        "categories": [
+          "finance"
+        ],
+        "view": 0,
+        "example": "/bithumb/notice",
+        "parameters": {
+          "category": {
+            "description": "Notice category. Omit to get all categories.",
+            "options": [
+              {
+                "value": "notice",
+                "label": "Notice"
+              },
+              {
+                "value": "new-service",
+                "label": "New Service"
+              },
+              {
+                "value": "maintenance",
+                "label": "Maintenance"
+              },
+              {
+                "value": "update",
+                "label": "Update"
+              },
+              {
+                "value": "trading-caution",
+                "label": "Trading Caution"
+              },
+              {
+                "value": "caution-and-delisting",
+                "label": "Trading Caution and Delisting"
+              },
+              {
+                "value": "deposit-withdrawal",
+                "label": "Deposit and Withdrawal"
+              },
+              {
+                "value": "event",
+                "label": "Event"
+              },
+              {
+                "value": "market-addition",
+                "label": "Market Addition"
+              },
+              {
+                "value": "disclosure",
+                "label": "Disclosure"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "feed.bithumb.com/notice"
+            ],
+            "target": "/notice"
+          },
+          {
+            "source": [
+              "www.bithumb.com/react/notice"
+            ],
+            "target": "/notice"
+          }
+        ],
+        "name": "Notice",
+        "description": "Notice list from Bithumb, with optional category filter. The notice body is not exposed by the public API, so items only contain title, category and publish date.",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "location": "notice.ts",
+        "module": () => import('@/routes/bithumb/notice.ts')
+      }
+    },
+    "apiRoutes": {},
+    "name": "Bithumb",
+    "url": "www.bithumb.com",
+    "lang": "ko"
+  },
   "bluearchive": {
     "routes": {
       "/news/:server/:type?": {
@@ -2181,6 +2265,97 @@ export default {
     "name": "大众点评",
     "url": "dianping.com",
     "lang": "zh-CN"
+  },
+  "digitalx": {
+    "routes": {
+      "/notice/:category?": {
+        "path": "/notice/:category?",
+        "categories": [
+          "finance"
+        ],
+        "view": 0,
+        "example": "/digitalx/notice",
+        "parameters": {
+          "category": {
+            "description": "Notice category. Omit to get all categories.",
+            "options": [
+              {
+                "value": "important",
+                "label": "Important"
+              },
+              {
+                "value": "notice",
+                "label": "Notice"
+              },
+              {
+                "value": "event",
+                "label": "Event"
+              },
+              {
+                "value": "fee-event",
+                "label": "Fee Event"
+              },
+              {
+                "value": "deposit-withdrawal",
+                "label": "Deposit and Withdrawal"
+              },
+              {
+                "value": "web3",
+                "label": "Web3"
+              },
+              {
+                "value": "maintenance",
+                "label": "Maintenance"
+              },
+              {
+                "value": "insights",
+                "label": "Insights"
+              },
+              {
+                "value": "new",
+                "label": "New"
+              },
+              {
+                "value": "caution",
+                "label": "Caution"
+              },
+              {
+                "value": "update",
+                "label": "Update"
+              },
+              {
+                "value": "closed",
+                "label": "Closed"
+              },
+              {
+                "value": "other",
+                "label": "Other"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "digitalx.miraeasset.com/notice"
+            ],
+            "target": "/notice"
+          }
+        ],
+        "name": "Notice",
+        "description": "Notice list from Digital X (formerly Korbit), with optional category filter.",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "location": "notice.ts",
+        "module": () => import('@/routes/digitalx/notice.ts')
+      }
+    },
+    "apiRoutes": {},
+    "name": "Digital X",
+    "url": "digitalx.miraeasset.com",
+    "lang": "ko",
+    "description": "Formerly known as Korbit."
   },
   "dingshao": {
     "routes": {
@@ -3349,6 +3524,69 @@ export default {
       "programming"
     ],
     "lang": "en"
+  },
+  "gopax": {
+    "routes": {
+      "/notice/:category?": {
+        "path": "/notice/:category?",
+        "categories": [
+          "finance"
+        ],
+        "view": 0,
+        "example": "/gopax/notice",
+        "parameters": {
+          "category": {
+            "description": "Notice category. Use `all` or omit the parameter to get all categories.",
+            "default": "all",
+            "options": [
+              {
+                "value": "all",
+                "label": "All"
+              },
+              {
+                "value": "notice",
+                "label": "Notice"
+              },
+              {
+                "value": "listing",
+                "label": "Listing"
+              },
+              {
+                "value": "event",
+                "label": "Event"
+              },
+              {
+                "value": "deposit-withdrawal",
+                "label": "Deposit and Withdrawal"
+              },
+              {
+                "value": "disclosure",
+                "label": "Disclosure"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "www.gopax.co.kr/notice"
+            ],
+            "target": "/notice"
+          }
+        ],
+        "name": "Notice",
+        "description": "Notice list from GOPAX, with optional category filter.",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "location": "notice.ts",
+        "module": () => import('@/routes/gopax/notice.ts')
+      }
+    },
+    "apiRoutes": {},
+    "name": "GOPAX",
+    "url": "www.gopax.co.kr",
+    "lang": "ko"
   },
   "grupoanimal": {
     "routes": {
@@ -7297,6 +7535,81 @@ export default {
     "name": "Unusual Whales",
     "url": "unusualwhales.com",
     "lang": "en"
+  },
+  "upbit": {
+    "routes": {
+      "/notice/:category?": {
+        "path": "/notice/:category?",
+        "categories": [
+          "finance"
+        ],
+        "view": 0,
+        "example": "/upbit/notice",
+        "parameters": {
+          "category": {
+            "description": "Notice category",
+            "default": "all",
+            "options": [
+              {
+                "value": "all",
+                "label": "All"
+              },
+              {
+                "value": "notice",
+                "label": "Notice"
+              },
+              {
+                "value": "trade",
+                "label": "Trade"
+              },
+              {
+                "value": "dtw",
+                "label": "Deposit and Withdrawal"
+              },
+              {
+                "value": "maintenance",
+                "label": "Maintenance"
+              },
+              {
+                "value": "digital_asset",
+                "label": "Digital Asset"
+              },
+              {
+                "value": "nft",
+                "label": "NFT"
+              },
+              {
+                "value": "staking",
+                "label": "Service+"
+              },
+              {
+                "value": "event",
+                "label": "Event"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "www.upbit.com/service_center/notice"
+            ],
+            "target": "/notice"
+          }
+        ],
+        "name": "Notice",
+        "description": "Notice list from Upbit, with optional category filter. The notice detail API is heavily rate limited, so items only contain title, category and publish date.",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "location": "notice.ts",
+        "module": () => import('@/routes/upbit/notice.ts')
+      }
+    },
+    "apiRoutes": {},
+    "name": "Upbit",
+    "url": "upbit.com",
+    "lang": "ko"
   },
   "utdallas": {
     "routes": {
@@ -16104,6 +16417,72 @@ export default {
     "name": "差评",
     "url": "chaping.cn",
     "lang": "zh-CN"
+  },
+  "coinone": {
+    "routes": {
+      "/notice/:category?": {
+        "path": "/notice/:category?",
+        "categories": [
+          "finance"
+        ],
+        "view": 0,
+        "example": "/coinone/notice",
+        "parameters": {
+          "category": {
+            "description": "Notice category. Omit to get all categories.",
+            "options": [
+              {
+                "value": "event",
+                "label": "Event"
+              },
+              {
+                "value": "event-result",
+                "label": "Event Result"
+              },
+              {
+                "value": "listing",
+                "label": "Listing"
+              },
+              {
+                "value": "deposit-withdrawal",
+                "label": "Deposit and Withdrawal"
+              },
+              {
+                "value": "security",
+                "label": "Security"
+              },
+              {
+                "value": "announcement",
+                "label": "Announcement"
+              },
+              {
+                "value": "disclosure",
+                "label": "Disclosure"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "coinone.co.kr/info/notice"
+            ],
+            "target": "/notice"
+          }
+        ],
+        "name": "Notice",
+        "description": "Notice list from Coinone, with optional category filter.",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "location": "notice.ts",
+        "module": () => import('@/routes/coinone/notice.ts')
+      }
+    },
+    "apiRoutes": {},
+    "name": "Coinone",
+    "url": "coinone.co.kr",
+    "lang": "ko"
   },
   "creative-comic": {
     "routes": {

@@ -114,6 +114,9 @@
   "/bitbucket/tags/:workspace/:repo_slug": [
     "AuroraDysis"
   ],
+  "/bithumb/notice/:category?": [
+    "crypto-2042"
+  ],
   "/bluearchive/news/:server/:type?": [
     "equt"
   ],
@@ -177,6 +180,9 @@
   ],
   "/dianping/user/:id": [
     "pseudoyu"
+  ],
+  "/digitalx/notice/:category?": [
+    "crypto-2042"
   ],
   "/dingshao/share/:shortId": [
     "TonyRL"
@@ -296,6 +302,9 @@
   ],
   "/gitlab/tag/:namespace/:project/:host?": [
     "zoenglinghou"
+  ],
+  "/gopax/notice/:category?": [
+    "crypto-2042"
   ],
   "/grupoanimal/estados": [
     "Slayer015"
@@ -513,6 +522,9 @@
   ],
   "/unusualwhales/news": [
     "TonyRL"
+  ],
+  "/upbit/notice/:category?": [
+    "crypto-2042"
   ],
   "/utdallas/isso": [
     "Chang4Tech"
@@ -1265,6 +1277,9 @@
   ],
   "/chaping/news/:caty?": [
     "nczitzk"
+  ],
+  "/coinone/notice/:category?": [
+    "crypto-2042"
   ],
   "/creative-comic/book/:id/:coverOnly?/:quality?": [
     "TonyRL"

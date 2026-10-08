@@ -410,6 +410,7 @@ export type RoutePath =
   | `/bitbucket/commits/:workspace/:repo_slug`
   | `/bitbucket/tags/:workspace/:repo_slug`
   | `/bitget/announcement/:type/:lang?`
+  | `/bithumb/notice/:category?`
   | `/bitmovin/blog`
   | `/bjeea/:type`
   | `/bjfu/grs`
@@ -719,6 +720,7 @@ export type RoutePath =
   | `/cohere/blog`
   | `/coindesk/consensus-magazine`
   | `/coindesk/news`
+  | `/coinone/notice/:category?`
   | `/cointelegraph/`
   | `/colamanga/:id`
   | `/collabo-cafe/`
@@ -916,6 +918,7 @@ export type RoutePath =
   | `/digitaling/index`
   | `/digitaling/projects/:category`
   | `/digitalpolicyalert/activity-tracker/:filters?`
+  | `/digitalx/notice/:category?`
   | `/dingshao/share/:shortId`
   | `/discord/channel/:channelId`
   | `/discord/quests`
@@ -1367,6 +1370,7 @@ export type RoutePath =
   | `/google/research`
   | `/google/scholar/:query`
   | `/google/search/:keyword/:language?`
+  | `/gopax/notice/:category?`
   | `/gov/ah/kjt/:category{.+}?`
   | `/gov/beijing/bjedu/gh/:urlPath?`
   | `/gov/beijing/bphc/:caty`
@@ -3468,6 +3472,7 @@ export type RoutePath =
   | `/unit-image/films/:type?`
   | `/unraid/community-apps`
   | `/unusualwhales/news`
+  | `/upbit/notice/:category?`
   | `/upc/jsj/:type`
   | `/upc/jwc/:type?`
   | `/upc/main/:type`

@@ -251,6 +251,29 @@
       }
     ]
   },
+  "bithumb.com": {
+    "_name": "Bithumb",
+    "feed": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/notice"
+        ],
+        "target": "/bithumb/notice"
+      }
+    ],
+    "www": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/react/notice"
+        ],
+        "target": "/bithumb/notice"
+      }
+    ]
+  },
   "cags.ac.cn": {
     "_name": "Chinese Academy of Geological Sciences",
     "edu": [
@@ -568,6 +591,19 @@
       }
     ]
   },
+  "miraeasset.com": {
+    "_name": "Digital X",
+    "digitalx": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/notice"
+        ],
+        "target": "/digitalx/notice"
+      }
+    ]
+  },
   "dingshao.cn": {
     "_name": "盯梢",
     "www": [
@@ -819,6 +855,19 @@
           "/explore/projects/:type"
         ],
         "target": "/gitlab/explore/:type"
+      }
+    ]
+  },
+  "gopax.co.kr": {
+    "_name": "GOPAX",
+    "www": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/notice"
+        ],
+        "target": "/gopax/notice"
       }
     ]
   },
@@ -2372,6 +2421,19 @@
           "/"
         ],
         "target": "/unusualwhales/news"
+      }
+    ]
+  },
+  "upbit.com": {
+    "_name": "Upbit",
+    "www": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/service_center/notice"
+        ],
+        "target": "/upbit/notice"
       }
     ]
   },
@@ -4632,6 +4694,19 @@
           "/"
         ],
         "target": "/chaping/banner"
+      }
+    ]
+  },
+  "coinone.co.kr": {
+    "_name": "Coinone",
+    ".": [
+      {
+        "title": "Notice",
+        "docs": "https://docs.rsshub.app/routes/finance",
+        "source": [
+          "/info/notice"
+        ],
+        "target": "/coinone/notice"
       }
     ]
   },
