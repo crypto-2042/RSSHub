@@ -161,7 +161,7 @@ const handler: Route['handler'] = async (ctx) => {
             const section = getQueryData(parseQueryState(html).queries, 'sections');
             const sectionArticle = section.sectionArticle as SectionArticle;
             if (!Array.isArray(sectionArticle?.items)) {
-                throw new Error('Bitget returned an invalid announcement list');
+                throw new TypeError('Bitget returned an invalid announcement list');
             }
 
             // The localized section name is only available in the navigation list
@@ -247,26 +247,26 @@ export const route: Route = {
     name: 'Announcement',
     description: `type:
 
-| Type            | Description    |
-| --------------- | -------------- |
-| latest          | 最新动态       |
-| new-listing     | 新币上线       |
-| product-updates | 产品更新       |
-| campaigns       | 交易比赛和活动 |
-| delistings      | 下架资讯       |
-| security        | 安全专栏       |
-| institutional   | 机构服务       |
-| api-trading     | API交易        |
-| fiat            | 法币           |
-| maintenance     | 维护/系统升级  |
+| Type            | Description     |
+| --------------- | --------------- |
+| latest          | 最新动态        |
+| new-listing     | 新币上线        |
+| product-updates | 产品更新        |
+| campaigns       | 交易比赛和活动  |
+| delistings      | 下架资讯        |
+| security        | 安全专栏        |
+| institutional   | 机构服务        |
+| api-trading     | API 交易        |
+| fiat            | 法币            |
+| maintenance     | 维护 / 系统升级 |
 
 lang:
 
-| Lang  | Description | Missing types                            |
-| ----- | ----------- | ---------------------------------------- |
-| zh-CN | 中文        |                                          |
-| en    | English     |                                          |
-| es-ES | Español     | new-listing, institutional, fiat         |`,
+| Lang  | Description | Missing types                    |
+| ----- | ----------- | -------------------------------- |
+| zh-CN | 中文        |                                  |
+| en    | English     |                                  |
+| es-ES | Español     | new-listing, institutional, fiat |`,
     maintainers: ['YukiCoco'],
     handler,
 };
