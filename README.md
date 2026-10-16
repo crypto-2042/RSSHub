@@ -64,7 +64,6 @@ directory. It pulls the image and checks container health without restarting dep
 Use `./deploy.sh rsshub --rollback` to restore the saved local image; configuration and data
 must be restored separately. Image references are not stored in the secret `.env` file.
 
-
 Deploy RSSHub with a single click on Hostinger – pre-configured and ready to run
 
 [![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostg.xyz/aff_c?offer_id=48&aff_id=244128&url_id=6824)

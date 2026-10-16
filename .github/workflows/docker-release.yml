@@ -275,21 +275,21 @@ jobs:
             - name: Promote current default branch to latest
               if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
               env:
-                GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-                IMAGE: ghcr.io/${{ github.repository }}
-                SOURCE: ghcr.io/${{ github.repository }}:${{ github.sha }}
-                HUB_IMAGE: ${{ vars.DOCKER_USERNAME }}/${{ needs.release.outputs.repo-name }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+                  IMAGE: ghcr.io/${{ github.repository }}
+                  SOURCE: ghcr.io/${{ github.repository }}:${{ github.sha }}
+                  HUB_IMAGE: ${{ vars.DOCKER_USERNAME }}/${{ needs.release.outputs.repo-name }}
               run: |
-                IMAGE="${IMAGE,,}"
-                SOURCE="${SOURCE,,}"
-                head="$(gh api "repos/$GITHUB_REPOSITORY/commits/$DEFAULT_BRANCH" --jq .sha)"
-                if [ "$head" != "$GITHUB_SHA" ]; then
-                  echo 'Skipping latest: a newer default-branch commit exists.'
-                  exit 0
-                fi
-                docker buildx imagetools create --tag "$IMAGE:latest" "$SOURCE"
-                docker buildx imagetools create --tag "$HUB_IMAGE:latest" "$HUB_IMAGE:$GITHUB_SHA"
+                  IMAGE="${IMAGE,,}"
+                  SOURCE="${SOURCE,,}"
+                  head="$(gh api "repos/$GITHUB_REPOSITORY/commits/$DEFAULT_BRANCH" --jq .sha)"
+                  if [ "$head" != "$GITHUB_SHA" ]; then
+                    echo 'Skipping latest: a newer default-branch commit exists.'
+                    exit 0
+                  fi
+                  docker buildx imagetools create --tag "$IMAGE:latest" "$SOURCE"
+                  docker buildx imagetools create --tag "$HUB_IMAGE:latest" "$HUB_IMAGE:$GITHUB_SHA"
 
     description:
         runs-on: ubuntu-slim
