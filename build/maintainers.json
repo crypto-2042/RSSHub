@@ -699,6 +699,9 @@
     "nczitzk",
     "KotaHv"
   ],
+  "/eqn/:channel?/:lang?": [
+    "crypto-2042"
+  ],
   "/farcaster/user/:username": [
     "DIYgod"
   ],

@@ -2981,6 +2981,19 @@
       }
     ]
   },
+  "eqn.news": {
+    "_name": "方程式新闻",
+    ".": [
+      {
+        "title": "快讯",
+        "docs": "https://docs.rsshub.app/routes/new-media",
+        "source": [
+          "/"
+        ],
+        "target": "/eqn/main"
+      }
+    ]
+  },
   "warpcast.com": {
     "_name": "Farcaster",
     ".": [

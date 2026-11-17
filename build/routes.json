@@ -9667,6 +9667,132 @@
     "url": "store.epicgames.com",
     "lang": "en"
   },
+  "eqn": {
+    "routes": {
+      "/:channel?/:lang?": {
+        "path": "/:channel?/:lang?",
+        "categories": [
+          "new-media"
+        ],
+        "view": 5,
+        "example": "/eqn/main",
+        "parameters": {
+          "channel": {
+            "description": "频道；`all` 为全部频道（默认 `main`）",
+            "default": "main",
+            "options": [
+              {
+                "value": "main",
+                "label": "主频道 Main"
+              },
+              {
+                "value": "all",
+                "label": "全部频道 All"
+              },
+              {
+                "value": "tradfi",
+                "label": "方程式财经 TradFi"
+              },
+              {
+                "value": "binance",
+                "label": "币安公告 Binance"
+              },
+              {
+                "value": "korea",
+                "label": "韩所监控 Korean Exchanges"
+              },
+              {
+                "value": "pricechange",
+                "label": "价格异动 Price Moves"
+              },
+              {
+                "value": "oi",
+                "label": "OI价格异动 OI & Price Moves"
+              },
+              {
+                "value": "major",
+                "label": "大幅波动 Big Moves"
+              },
+              {
+                "value": "tier2",
+                "label": "二线上新 Tier-2 Listings"
+              },
+              {
+                "value": "tier3",
+                "label": "三线上新 Tier-3 Listings"
+              },
+              {
+                "value": "alpha",
+                "label": "币安Alpha Binance Alpha"
+              },
+              {
+                "value": "cz",
+                "label": "CZ&何一 CZ & Yi He Watch"
+              },
+              {
+                "value": "earn",
+                "label": "理财提醒 Earn Alerts"
+              },
+              {
+                "value": "hl",
+                "label": "Hyperliquid"
+              },
+              {
+                "value": "tfmoves",
+                "label": "美股重大行情 US Stock Big Moves"
+              }
+            ]
+          },
+          "lang": {
+            "description": "语言；缺少对应译文时依次回退到中文、英文、韩文（`tr` / `ru` 仅在源站提供译文时生效）",
+            "default": "zh",
+            "options": [
+              {
+                "value": "zh",
+                "label": "中文"
+              },
+              {
+                "value": "en",
+                "label": "English"
+              },
+              {
+                "value": "ko",
+                "label": "한국어"
+              },
+              {
+                "value": "tr",
+                "label": "Türkçe"
+              },
+              {
+                "value": "ru",
+                "label": "Русский"
+              }
+            ]
+          }
+        },
+        "radar": [
+          {
+            "source": [
+              "eqn.news/"
+            ],
+            "target": "/main"
+          }
+        ],
+        "name": "快讯",
+        "description": "数据来自「方程式新闻」公开 JSON 接口，免 Key。`all` 为全部频道；`lang` 缺少对应译文时回退到中文、英文、韩文，`tr` / `ru` 仅在源站提供译文时生效。",
+        "maintainers": [
+          "crypto-2042"
+        ],
+        "url": "eqn.news/",
+        "location": "news.tsx",
+        "module": "() => import('@/routes/eqn/news.tsx')"
+      }
+    },
+    "apiRoutes": {},
+    "name": "方程式新闻",
+    "url": "eqn.news",
+    "lang": "zh-CN"
+  },
   "farcaster": {
     "routes": {
       "/user/:username": {

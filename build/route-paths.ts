@@ -1106,6 +1106,7 @@ export type RoutePath =
   | `/enterprisecraftsmanship/archives`
   | `/epicgames/freegames/:locale?/:country?`
   | `/eprice/:region?`
+  | `/eqn/:channel?/:lang?`
   | `/eshukan/academic/:id?`
   | `/espn/news/:sport`
   | `/esquirehk/tag/:id?`
