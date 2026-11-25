@@ -28,6 +28,7 @@ export interface Event {
     endDate?: string;
     liquidity?: number;
     live?: boolean;
+    createdAt?: string;
     markets?: Market[];
     tags?: Array<{ label?: string }>;
 }

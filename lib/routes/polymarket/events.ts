@@ -1,4 +1,5 @@
-import type { Route } from '@/types';
+import InvalidParameterError from '@/errors/types/invalid-parameter';
+import type { Data, Route } from '@/types';
 import ofetch from '@/utils/ofetch';
 import { parseDate } from '@/utils/parse-date';
 
@@ -7,11 +8,12 @@ import { GAMMA_API } from './types';
 import { formatEventDescription } from './utils';
 
 export const route: Route = {
-    path: '/events/:tagSlug?',
+    path: '/events/:tagSlug?/:mode?',
     categories: ['finance'],
     example: '/polymarket/events',
     parameters: {
         tagSlug: 'Tag slug to filter events, e.g. politics, sports, crypto. Omit for all events.',
+        mode: 'Set to latest to follow newly created events and omit high-frequency recurring markets and live quotes.',
     },
     features: {
         requireConfig: false,
@@ -33,15 +35,21 @@ export const route: Route = {
     handler,
 };
 
-async function handler(ctx) {
-    const tagSlug = ctx.req.param('tagSlug');
+async function handler(ctx): Promise<Data> {
+    const { tagSlug, mode } = ctx.req.param();
+    if (mode !== undefined && mode !== 'latest') {
+        throw new InvalidParameterError('Polymarket events mode must be latest.');
+    }
+    const latest = mode === 'latest';
     const limit = 30;
 
     const query = {
         active: true,
         closed: false,
         limit,
-        order: 'volume',
+        order: latest ? 'createdAt' : 'volume',
+        // Polymarket marks short recurring markets with the hide-from-new tag.
+        exclude_tag_id: latest ? 102169 : undefined,
         ascending: false,
         tag_slug: tagSlug || undefined,
     };
@@ -50,16 +58,19 @@ async function handler(ctx) {
 
     const data = response.data || [];
 
-    const items = data.map((event) => ({
-        title: event.title,
-        description: formatEventDescription(event),
-        link: `https://polymarket.com/event/${event.slug}`,
-        pubDate: event.startDate ? parseDate(event.startDate) : undefined,
-        category: event.tags?.map((t) => t.label).filter((label): label is string => Boolean(label)),
-    }));
+    const items = (latest ? data.filter((event) => event.createdAt) : data).map((event) => {
+        const publishedAt = latest ? event.createdAt : event.startDate;
+        return {
+            title: event.title,
+            description: formatEventDescription(event, !latest),
+            link: `https://polymarket.com/event/${event.slug}`,
+            pubDate: publishedAt ? parseDate(publishedAt) : undefined,
+            category: event.tags?.map((t) => t.label).filter((label): label is string => Boolean(label)),
+        };
+    });
 
     return {
-        title: `Polymarket Events${tagSlug ? ` - ${tagSlug}` : ''}`,
+        title: `Polymarket ${latest ? 'Latest Events' : 'Events'}${tagSlug ? ` - ${tagSlug}` : ''}`,
         link: tagSlug ? `https://polymarket.com/${tagSlug}` : 'https://polymarket.com',
         item: items,
     };
